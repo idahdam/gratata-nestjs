@@ -55,7 +55,6 @@ export class PostsController {
     ): Promise<object> {
         // get the number of affected rows
         const result = await this.postService.update(id, post, req.user.id);
-        console.log(result);
 
         // if the number of row affected is zero,
         // it means the post doesn't exist in our db
