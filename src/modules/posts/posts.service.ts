@@ -10,14 +10,12 @@ export class PostsService {
         @Inject(POST_REPOSITORY) private readonly postRepository: typeof Post,
     ) {}
 
-    async create(post: PostDto, userId): Promise<Post> {
+    async create(post: PostDto, userId: number): Promise<Post> {
         return await this.postRepository.create<Post>({ ...post, userId });
     }
 
     async findAll(): Promise<Post[]> {
-        return await this.postRepository.findAll<Post>({
-            include: [{ model: User, attributes: { exclude: ['password'] } }],
-        });
+        return await this.postRepository.findAll<Post>();
     }
 
     async findOne(id: number): Promise<Post> {
