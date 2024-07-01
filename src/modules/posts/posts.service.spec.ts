@@ -92,6 +92,35 @@ describe('PostsService', () => {
             });
             expect(result).toEqual(createdPost);
         });
+
+        it('should throw an error if the post could not be created', async () => {
+            const postDto: PostDto = {
+                title: 'Test Post',
+                body: 'Test body',
+            };
+            const userId = 1;
+
+            // Option 1: Using mockRejectedValue
+            // mockPostRepository.create.mockRejectedValue(new Error());
+
+            // await expect(service.create(postDto, userId)).rejects.toThrow();
+            // expect(mockPostRepository.create).toHaveBeenCalledWith({
+            //     ...postDto,
+            //     userId,
+            // });
+
+            // Option 2: Using jest spyOn
+            jest.spyOn(mockPostRepository, 'create').mockRejectedValue(
+                new Error(),
+            );
+            // Assert
+            await expect(service.create(postDto, userId)).rejects.toThrow();
+            expect(mockPostRepository.create).toHaveBeenCalledTimes(1);
+            expect(mockPostRepository.create).toHaveBeenCalledWith({
+                ...postDto,
+                userId,
+            });
+        });
     });
 
     describe('findAll', () => {
@@ -122,6 +151,27 @@ describe('PostsService', () => {
             // Assert
             expect(mockPostRepository.findAll).toHaveBeenCalledTimes(1);
             expect(result).toEqual(posts);
+        });
+
+        it('should return empty array of posts', async () => {
+            // Arrange
+            const posts: Post[] = [];
+
+            // Act
+            // Option 1: Using mockResolvedValue
+            mockPostRepository.findAll.mockResolvedValue(posts);
+
+            expect(await service.findAll()).toEqual(posts);
+            expect(mockPostRepository.findAll).toHaveBeenCalled();
+
+            // // Option 2: Using jest spyOn
+            // jest.spyOn(mockPostRepository, 'findAll').mockResolvedValue(posts);
+
+            // const result = await service.findAll();
+
+            // // Assert
+            // expect(mockPostRepository.findAll).toHaveBeenCalledTimes(1);
+            // expect(result).toEqual(posts);
         });
     });
 
